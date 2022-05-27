@@ -50,8 +50,8 @@ async function run() {
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
-        //load orders for specific user
 
+        //load orders placed by specific user
         app.get('/order', async (req, res) => {
             const customer = req.query.customer;
             const query = { customer: customer };
