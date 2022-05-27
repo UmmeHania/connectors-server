@@ -17,6 +17,8 @@ async function run() {
     try {
         await client.connect();
         const partCollection = client.db('connectors').collection('parts');
+        const reviewCollection = client.db('connectors').collection('reviews');
+        const orderCollection = client.db('connectors').collection('orders');
 
         //load all parts
         app.get('/parts', async (req, res) => {
@@ -26,6 +28,14 @@ async function run() {
             res.send(parts);
         })
 
+        //load all reviews
+        app.get('/reviews', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+        })
+
         //load single part details
         app.get("/parts/:id", async (req, res) => {
             const id = req.params.id;
@@ -33,6 +43,21 @@ async function run() {
             const part = await partCollection.findOne(query);
             res.send(part);
         });
+
+        //accumulate all orders
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result);
+        })
+        //load orders for specific user
+
+        app.get('/order', async (req, res) => {
+            const customer = req.query.customer;
+            const query = { customer: customer };
+            const orders = await orderCollection.find(query).toArray();
+            res.send(orders);
+        })
 
     }
     finally {
