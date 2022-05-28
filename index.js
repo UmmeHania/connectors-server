@@ -95,6 +95,13 @@ async function run() {
             res.send(parts);
         })
 
+        //add new part
+        app.post('/parts', async (req, res) => {
+            const newPart = req.body;
+            const result = await partCollection.insertOne(newPart);
+            res.send(result);
+        });
+
         //load all reviews
         app.get('/reviews', async (req, res) => {
             const query = {};
@@ -102,6 +109,13 @@ async function run() {
             const reviews = await cursor.toArray();
             res.send(reviews);
         })
+
+        // Add new review
+        app.post('/reviews', async (req, res) => {
+            const newReview = req.body;
+            const result = await reviewCollection.insertOne(newReview);
+            res.send(result);
+        });
 
         //load single part details
         app.get("/parts/:id", async (req, res) => {
