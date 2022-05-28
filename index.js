@@ -19,6 +19,19 @@ async function run() {
         const partCollection = client.db('connectors').collection('parts');
         const reviewCollection = client.db('connectors').collection('reviews');
         const orderCollection = client.db('connectors').collection('orders');
+        const userCollection = client.db('connectors').collection('users');
+
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+        })
 
         //load all parts
         app.get('/parts', async (req, res) => {
@@ -58,6 +71,7 @@ async function run() {
             const orders = await orderCollection.find(query).toArray();
             res.send(orders);
         })
+
 
     }
     finally {
